@@ -77,7 +77,6 @@ namespace Projact__ItI.Controllers
                 ? "Walk-in Customer"
                 : sale.CustomerName.Trim();
 
-            // Reduce the stock
             product.Quantity -= sale.Quantity;
 
             DB.Sales.Add(sale);
@@ -114,7 +113,7 @@ namespace Projact__ItI.Controllers
                 return NotFound();
             }
 
-            // Cancelling a sale returns the items to the stock
+          
             if (sale.Product != null)
             {
                 sale.Product.Quantity += sale.Quantity;

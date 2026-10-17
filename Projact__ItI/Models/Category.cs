@@ -14,7 +14,6 @@ namespace Projact__ItI.Models
         [StringLength(500, ErrorMessage = "Description cannot be longer than 500 characters.")]
         public string? Description { get; set; }
 
-        // Navigation Property
         public List<Product> Products { get; set; } = new List<Product>();
     }
 }

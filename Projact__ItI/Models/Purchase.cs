@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Projact__ItI.Models
 {
-    // A restock: goods received from a supplier (increases product stock)
+    
     public class Purchase
     {
         [Key]

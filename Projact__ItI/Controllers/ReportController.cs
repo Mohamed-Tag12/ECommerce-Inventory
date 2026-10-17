@@ -33,7 +33,7 @@ namespace Projact__ItI.Controllers
 
             model.AverageOrder = model.Orders == 0 ? 0 : model.Revenue / model.Orders;
 
-            // revenue per day (inside the selected range)
+
             var days = (toDate - fromDate).Days + 1;
             model.Daily = Enumerable.Range(0, days)
                 .Select(i => fromDate.AddDays(i))
@@ -92,7 +92,7 @@ namespace Projact__ItI.Controllers
                     s.Total.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)));
             }
 
-            // UTF-8 with BOM so Excel opens it correctly
+           
             var bytes = new UTF8Encoding(true).GetPreamble()
                 .Concat(Encoding.UTF8.GetBytes(sb.ToString()))
                 .ToArray();
@@ -110,7 +110,6 @@ namespace Projact__ItI.Controllers
                 (fromDate, toDate) = (toDate, fromDate);
             }
 
-            // keep the chart readable
             if ((toDate - fromDate).Days > 365)
             {
                 fromDate = toDate.AddDays(-365);

@@ -20,7 +20,6 @@ namespace Projact__ItI.Models
         [Range(1, int.MaxValue, ErrorMessage = "Quantity must be at least 1.")]
         public int Quantity { get; set; } = 1;
 
-        // Price at the moment of the sale (so old sales don't change if the product price changes)
         [Column(TypeName = "decimal(18,2)")]
         public decimal UnitPrice { get; set; }
 

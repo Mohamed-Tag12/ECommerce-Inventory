@@ -76,7 +76,7 @@ namespace Projact__ItI.Controllers
 
             purchase.PurchaseDate = DateTime.Now;
 
-            // goods received -> stock goes up
+       
             product!.Quantity += purchase.Quantity;
 
             DB.Purchases.Add(purchase);
