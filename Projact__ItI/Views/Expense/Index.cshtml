@@ -1,0 +1,178 @@
+@model List<Expense>
+
+@{
+    ViewData["Title"] = "Expenses";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+
+    DateTime month = ViewBag.Month;
+    decimal revenue = ViewBag.Revenue;
+    decimal totalExpenses = ViewBag.TotalExpenses;
+    decimal net = ViewBag.Net;
+    decimal stockSpend = ViewBag.StockSpend;
+    var byCategory = (List<Projact__ItI.ViewModels.ExpenseCategoryTotal>)ViewBag.ByCategory;
+    var palette = new[] { "#6366f1", "#22c55e", "#f59e0b", "#ec4899", "#06b6d4", "#ef4444", "#a855f7" };
+}
+
+<div class="container-fluid">
+
+    <partial name="_Alerts" />
+
+    <div class="page-head">
+        <div>
+            <h2><i class="bi bi-wallet2 text-primary me-2"></i>Expenses</h2>
+            <p class="text-muted mb-0">Track rent, salaries, marketing and every cost of running the shop</p>
+        </div>
+
+        <div class="d-flex align-items-center gap-3 flex-wrap">
+            <div class="month-nav">
+                <a asp-action="Index" asp-route-month="@ViewBag.PrevMonth" class="icon-btn"><i class="bi bi-chevron-left"></i></a>
+                <span class="label">@month.ToString("MMMM yyyy")</span>
+                @if (!(bool)ViewBag.IsCurrent)
+                {
+                    <a asp-action="Index" asp-route-month="@ViewBag.NextMonth" class="icon-btn"><i class="bi bi-chevron-right"></i></a>
+                }
+                else
+                {
+                    <span class="icon-btn" style="opacity:.35;cursor:default"><i class="bi bi-chevron-right"></i></span>
+                }
+            </div>
+            <a asp-action="Add" class="btn btn-primary px-4">
+                <i class="bi bi-plus-circle me-2"></i>Add Expense
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-md-6 col-xl-3">
+            <div class="stat-mini">
+                <div class="ico" style="background:linear-gradient(135deg,#16a34a,#22c55e)"><i class="bi bi-cash-coin"></i></div>
+                <div><small>Sales revenue</small><strong>@revenue.ToString("N0") EGP</strong></div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="stat-mini">
+                <div class="ico" style="background:linear-gradient(135deg,#e11d48,#fb7185)"><i class="bi bi-wallet2"></i></div>
+                <div><small>Expenses</small><strong>@totalExpenses.ToString("N0") EGP</strong></div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="stat-mini">
+                <div class="ico" style="background:linear-gradient(135deg,@(net >= 0 ? "#4f46e5,#818cf8" : "#dc2626,#f87171"))"><i class="bi bi-graph-up-arrow"></i></div>
+                <div><small>Revenue minus expenses</small><strong class="@(net >= 0 ? "text-success" : "text-danger")">@net.ToString("N0") EGP</strong></div>
+            </div>
+        </div>
+        <div class="col-md-6 col-xl-3">
+            <div class="stat-mini">
+                <div class="ico" style="background:linear-gradient(135deg,#f59e0b,#fbbf24)"><i class="bi bi-box-arrow-in-down"></i></div>
+                <div><small>Spent on stock</small><strong>@stockSpend.ToString("N0") EGP</strong></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-4">
+            <div class="content-card h-100">
+                <h5 class="fw-bold mb-3"><i class="bi bi-pie-chart-fill text-primary me-2"></i>By category</h5>
+
+                @if (byCategory.Any())
+                {
+                    <div class="chart-wrapper" style="height:220px"><canvas id="expenseChart"></canvas></div>
+
+                    <div class="mt-3">
+                        @for (int i = 0; i < byCategory.Count; i++)
+                        {
+                            <div class="list-row">
+                                <span><span class="cat-dot" style="background:@palette[i % palette.Length]"></span>@byCategory[i].Category</span>
+                                <strong>@byCategory[i].Total.ToString("N0")</strong>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted text-center py-5 mb-0">No expenses this month</p>
+                }
+            </div>
+        </div>
+
+        <div class="col-lg-8">
+            <div class="app-card overflow-hidden h-100">
+                @if (Model.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead>
+                                <tr>
+                                    <th>Expense</th>
+                                    <th>Category</th>
+                                    <th>Date</th>
+                                    <th class="text-end">Amount</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var e in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <div class="fw-semibold">@e.Title</div>
+                                            @if (!string.IsNullOrWhiteSpace(e.Note))
+                                            {
+                                                <div class="small text-muted">@e.Note</div>
+                                            }
+                                        </td>
+                                        <td><span class="chip">@e.Category</span></td>
+                                        <td class="text-muted">@e.ExpenseDate.ToString("dd MMM yyyy")</td>
+                                        <td class="text-end fw-bold text-danger">@e.Amount.ToString("N0") EGP</td>
+                                        <td class="text-center">
+                                            <div class="d-flex justify-content-center gap-2">
+                                                <a asp-action="Edit" asp-route-id="@e.ExpenseId" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
+                                                <form asp-action="Delete" asp-route-id="@e.ExpenseId" asp-route-month="@month.ToString("yyyy-MM")" method="post"
+                                                      onsubmit="return confirm('Delete this expense?');">
+                                                    <button type="submit" class="btn btn-sm btn-outline-danger"><i class="bi bi-trash"></i></button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+                        <i class="bi bi-wallet2 display-1 text-secondary"></i>
+                        <h4 class="mt-3">No expenses in @month.ToString("MMMM yyyy")</h4>
+                        <a asp-action="Add" class="btn btn-primary mt-2"><i class="bi bi-plus-circle me-2"></i>Add Expense</a>
+                    </div>
+                }
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+@section Scripts {
+    @if (byCategory.Any())
+    {
+        <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                var data = @Html.Raw(Newtonsoft.Json.JsonConvert.SerializeObject(byCategory));
+                var palette = ["#6366f1", "#22c55e", "#f59e0b", "#ec4899", "#06b6d4", "#ef4444", "#a855f7"];
+
+                new Chart(document.getElementById("expenseChart"), {
+                    type: "doughnut",
+                    data: {
+                        labels: data.map(function (x) { return x.Category; }),
+                        datasets: [{ data: data.map(function (x) { return x.Total; }), backgroundColor: palette, borderWidth: 0 }]
+                    },
+                    options: { responsive: true, maintainAspectRatio: false, cutout: "62%", plugins: { legend: { display: false } } }
+                });
+            });
+        </script>
+    }
+}

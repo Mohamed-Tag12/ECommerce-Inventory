@@ -1,0 +1,9 @@
+@{
+    // Same shell (sidebar + topbar + footer) for every page
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+@RenderBody()
+
+@section Scripts {
+    @await RenderSectionAsync("Scripts", required: false)
+}

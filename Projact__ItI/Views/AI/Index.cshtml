@@ -1,0 +1,390 @@
+﻿@{
+    ViewData["Title"] = "AI Assistant";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+<div class="container py-4">
+
+    <div class="card border-0 shadow-sm rounded-4">
+
+        <div class="card-body p-4">
+
+            <div class="text-center mb-4">
+
+                <div class="ai-avatar">
+                    <i class="bi bi-cpu-fill"></i>
+                </div>
+
+                <h4 class="fw-bold mt-3 mb-1">
+                    AI Inventory Assistant
+                </h4>
+
+                <p class="text-muted small">
+                    Smart inventory analytics and product insights
+                </p>
+
+            </div>
+
+            <div class="mb-4">
+
+                <h6 class="fw-bold text-center mb-3">
+                    Suggested Questions
+                </h6>
+
+                <div class="d-flex flex-wrap justify-content-center gap-2">
+
+                    <button class="btn btn-outline-primary suggestion-btn"
+                            onclick="setQuestion('low stock')">
+                        Low Stock
+                    </button>
+
+                    <button class="btn btn-outline-success suggestion-btn"
+                            onclick="setQuestion('total products')">
+                        Total Products
+                    </button>
+
+                    <button class="btn btn-outline-warning suggestion-btn"
+                            onclick="setQuestion('most expensive')">
+                        Most Expensive
+                    </button>
+
+                    <button class="btn btn-outline-danger suggestion-btn"
+                            onclick="setQuestion('out of stock')">
+                        Out Of Stock
+                    </button>
+
+                    <button class="btn btn-outline-dark suggestion-btn"
+                            onclick="setQuestion('cheapest product')">
+                        Cheapest
+                    </button>
+
+                    <button class="btn btn-outline-info suggestion-btn"
+                            onclick="setQuestion('average price')">
+                        Average Price
+                    </button>
+
+                    <button class="btn btn-outline-secondary suggestion-btn"
+                            onclick="setQuestion('inventory value')">
+                        Inventory Value
+                    </button>
+
+                    <button class="btn btn-outline-primary suggestion-btn"
+                            onclick="setQuestion('products by category')">
+                        Categories
+                    </button>
+
+                </div>
+
+            </div>
+
+            <div id="chatBox" class="chat-box mb-3">
+
+                <div class="welcome-message text-center">
+
+                    <div class="welcome-icon">
+                        <i class="bi bi-robot"></i>
+                    </div>
+
+                    <h5 class="fw-bold mt-3">
+                        Welcome 👋
+                    </h5>
+
+                    <p class="text-muted small">
+                        Ask anything about products, stock and categories.
+                    </p>
+
+                </div>
+
+            </div>
+
+            <div class="input-group">
+
+                <input type="text"
+                       id="question"
+                       class="form-control"
+                       placeholder="Ask something..." />
+
+                <button class="btn btn-primary"
+                        onclick="askAI()">
+
+                    <i class="bi bi-send-fill"></i>
+
+                </button>
+
+                <button class="btn btn-outline-danger"
+                        onclick="clearChat()">
+
+                    <i class="bi bi-trash"></i>
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+
+    .ai-avatar {
+        width: 65px;
+        height: 65px;
+        margin: auto;
+        border-radius: 18px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 28px;
+        color: white;
+        background: linear-gradient(135deg,#2563eb,#7c3aed);
+        box-shadow: 0 8px 20px rgba(37,99,235,.2);
+    }
+
+    .suggestion-btn {
+        border-radius: 10px;
+        padding: 7px 14px;
+        font-size: 13px;
+        font-weight: 600;
+    }
+
+    .chat-box {
+        height: 400px;
+        overflow-y: auto;
+        background: #f8fafc;
+        border: 1px solid #e5e7eb;
+        border-radius: 16px;
+        padding: 15px;
+    }
+
+    .welcome-message {
+        margin-top: 80px;
+    }
+
+    .welcome-icon {
+        width: 50px;
+        height: 50px;
+        margin: auto;
+        border-radius: 12px;
+        background: #eef2ff;
+        color: #4f46e5;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 24px;
+    }
+
+    .user-message {
+        background: #2563eb;
+        color: white;
+        padding: 10px 14px;
+        border-radius: 15px 15px 4px 15px;
+        margin-bottom: 10px;
+        margin-left: auto;
+        width: fit-content;
+        max-width: 70%;
+    }
+
+    .bot-row {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+
+    .bot-icon {
+        width: 35px;
+        height: 35px;
+        min-width: 35px;
+        border-radius: 10px;
+        background: #4f46e5;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ai-message {
+        background: white;
+        border: 1px solid #e5e7eb;
+        padding: 12px 15px;
+        border-radius: 15px;
+        max-width: 75%;
+    }
+
+    .msg-time {
+        font-size: 11px;
+        opacity: .7;
+        margin-top: 5px;
+    }
+
+    .loading-message {
+        background: white;
+        border: 1px solid #e5e7eb;
+        padding: 12px 15px;
+        border-radius: 15px;
+    }
+
+    .spinner-border-sm {
+        width: 1rem;
+        height: 1rem;
+    }
+
+</style>
+
+@section Scripts
+{
+    <script>
+
+        function getCurrentTime()
+        {
+            let now = new Date();
+
+            return now.toLocaleTimeString([], {
+                hour: '2-digit',
+                minute: '2-digit'
+            });
+        }
+
+        function setQuestion(text)
+        {
+            document.getElementById("question").value = text;
+            askAI();
+        }
+
+        function clearChat()
+        {
+            document.getElementById("chatBox").innerHTML = `
+
+                <div class="welcome-message text-center">
+
+                    <div class="welcome-icon">
+                        <i class="bi bi-robot"></i>
+                    </div>
+
+                    <h5 class="fw-bold mt-3">
+                        Welcome 👋
+                    </h5>
+
+                    <p class="text-muted small">
+                        Ask anything about products, stock and categories.
+                    </p>
+
+                </div>
+
+            `;
+        }
+
+        function askAI()
+        {
+            let question = document.getElementById("question").value;
+
+            if (question.trim() === "")
+                return;
+
+            let chatBox = document.getElementById("chatBox");
+
+            chatBox.innerHTML += `
+
+                <div class="user-message">
+
+                    ${question}
+
+                    <div class="msg-time">
+                        ${getCurrentTime()}
+                    </div>
+
+                </div>
+
+            `;
+
+            chatBox.innerHTML += `
+
+                <div class="bot-row" id="loading">
+
+                    <div class="bot-icon">
+                        <i class="bi bi-cpu-fill"></i>
+                    </div>
+
+                    <div class="loading-message">
+
+                        <div class="spinner-border spinner-border-sm text-primary"></div>
+
+                        <span class="ms-2">
+                            Thinking...
+                        </span>
+
+                    </div>
+
+                </div>
+
+            `;
+
+            chatBox.scrollTop = chatBox.scrollHeight;
+
+            fetch('/AI/Ask',
+            {
+                method: 'POST',
+                headers:
+                {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                },
+                body: 'question=' + encodeURIComponent(question)
+            })
+            .then(response => response.json())
+            .then(data =>
+            {
+                let loading = document.getElementById("loading");
+
+                if (loading)
+                    loading.remove();
+
+                chatBox.innerHTML += `
+
+                    <div class="bot-row">
+
+                        <div class="bot-icon">
+                            <i class="bi bi-cpu-fill"></i>
+                        </div>
+
+                        <div class="ai-message">
+
+                            ${data}
+
+                            <div class="msg-time">
+                                ${getCurrentTime()}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                `;
+
+                document.getElementById("question").value = "";
+
+                chatBox.scrollTop = chatBox.scrollHeight;
+            })
+            .catch(error =>
+            {
+                console.log(error);
+
+                let loading = document.getElementById("loading");
+
+                if (loading)
+                    loading.remove();
+            });
+        }
+
+        document
+        .getElementById("question")
+        .addEventListener("keypress", function (e)
+        {
+            if (e.key === "Enter")
+            {
+                askAI();
+            }
+        });
+
+    </script>
+}

@@ -1,0 +1,108 @@
+﻿@model Category
+
+@{
+    ViewData["Title"] = "Add Category";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="content-container">
+
+        <div class="d-flex align-items-center mb-4">
+
+            <div class="title-icon">
+                <i class="bi bi-tags"></i>
+            </div>
+
+            <div>
+                <h1 class="page-title">Add Category</h1>
+                <p class="page-subtitle mb-0">
+                    Create a new category
+                </p>
+            </div>
+
+        </div>
+
+        <div class="table-card">
+
+            <div class="table-card-header">
+                <h5 class="fw-bold mb-0">
+                    Category Information
+                </h5>
+            </div>
+
+            <div class="p-4">
+
+                <form asp-action="Add" method="post">
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="text-danger mb-3">
+                    </div>
+
+                    <div class="mb-3">
+
+                        <label asp-for="Name"
+                               class="form-label">
+                            Category Name
+                        </label>
+
+                        <input asp-for="Name"
+                               class="form-control"
+                               placeholder="Enter category name" />
+
+                        <span asp-validation-for="Name"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <div class="mb-4">
+
+                        <label asp-for="Description"
+                               class="form-label">
+                            Description
+                        </label>
+
+                        <textarea asp-for="Description"
+                                  rows="5"
+                                  class="form-control"
+                                  placeholder="Enter category description">
+                        </textarea>
+
+                        <span asp-validation-for="Description"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <div class="d-flex gap-2">
+
+                        <button type="submit"
+                                class="btn btn-primary">
+
+                            <i class="bi bi-check-lg me-2"></i>
+                            Create Category
+
+                        </button>
+
+                        <a asp-action="Index"
+                           class="btn btn-secondary">
+
+                            <i class="bi bi-arrow-left me-2"></i>
+                            Back
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>
+@section Scripts{
+    <partial name="_ValidationScriptsPartial" />
+}

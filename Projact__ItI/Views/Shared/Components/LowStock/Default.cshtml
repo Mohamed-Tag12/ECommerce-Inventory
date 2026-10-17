@@ -1,0 +1,47 @@
+@model Projact__ItI.ViewModels.LowStockViewModel
+
+<div class="dropdown">
+
+    <div class="icon-btn" data-bs-toggle="dropdown" data-bs-auto-close="outside" aria-expanded="false" title="Notifications">
+        <i class="bi bi-bell-fill"></i>
+        @if (Model.Total > 0)
+        {
+            <span class="dot">@(Model.Total > 9 ? "9+" : Model.Total.ToString())</span>
+        }
+    </div>
+
+    <div class="dropdown-menu dropdown-menu-end notif-menu">
+
+        <div class="notif-head">
+            <span>Low stock alerts</span>
+            <span class="pill red">@Model.Total</span>
+        </div>
+
+        @if (Model.Items.Any())
+        {
+            foreach (var p in Model.Items)
+            {
+                <a class="notif-item" asp-controller="Product" asp-action="Edit" asp-route-id="@p.ProductId">
+                    @if (!string.IsNullOrEmpty(p.ImagePath))
+                    {
+                        <img src="@Url.Content(p.ImagePath)" alt="" />
+                    }
+                    <div class="flex-grow-1">
+                        <strong>@p.Title</strong>
+                        <small>@(p.Quantity == 0 ? "Out of stock" : p.Quantity + " left - restock soon")</small>
+                    </div>
+                    <i class="bi bi-chevron-right text-muted"></i>
+                </a>
+            }
+        }
+        else
+        {
+            <div class="text-center text-muted py-4">
+                <i class="bi bi-check-circle fs-2 text-success d-block mb-2"></i>
+                Everything is well stocked
+            </div>
+        }
+
+    </div>
+
+</div>

@@ -1,0 +1,141 @@
+﻿@model Product
+
+@{
+    ViewData["Title"] = "Delete Product";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+<div class="page-wrapper">
+
+    <div class="content-container">
+
+        <div class="d-flex align-items-center mb-4">
+
+            <div class="title-icon danger">
+                <i class="bi bi-trash"></i>
+            </div>
+
+            <div>
+                <h1 class="page-title">Delete Product</h1>
+                <p class="page-subtitle mb-0">
+                    Remove product from inventory
+                </p>
+            </div>
+
+        </div>
+
+        <div class="form-card">
+
+            <div class="form-card-header danger-header">
+
+                <h5 class="fw-bold mb-0 text-white">
+                    Confirm Delete
+                </h5>
+
+            </div>
+
+            <div class="p-4">
+                @if (TempData["Error"] != null)
+                {
+                    <div class="alert alert-warning border-0">@TempData["Error"]</div>
+                }
+
+                <div class="alert alert-danger border-0">
+
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+
+                    Are you sure you want to delete
+
+                    <strong>
+                        @Model.Title
+                    </strong>
+
+                    ?
+
+                </div>
+
+                <div class="row align-items-center">
+
+                    <div class="col-md-4 mb-3">
+
+                        <div class="image-box">
+
+                            <img src="@Model.ImagePath"
+                                 class="product-image"
+                                 alt="@Model.Title" />
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-md-8">
+
+                        <div class="info-card">
+
+                            <div class="info-item">
+                                <span class="info-label">Product</span>
+                                <span class="info-value">@Model.Title</span>
+                            </div>
+
+                            <div class="info-item">
+                                <span class="info-label">Category</span>
+                                <span class="info-value">
+                                    @Model.Category?.Name
+                                </span>
+                            </div>
+
+                            <div class="info-item">
+                                <span class="info-label">Price</span>
+                                <span class="info-value">
+                                    @Model.Price EGP
+                                </span>
+                            </div>
+
+                            <div class="info-item">
+                                <span class="info-label">Quantity</span>
+                                <span class="info-value">
+                                    @Model.Quantity
+                                </span>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <hr class="my-4" />
+
+                <form asp-action="DeleteConfirmed"
+                      asp-route-id="@Model.ProductId"
+                      method="post">
+
+                    <div class="d-flex gap-2">
+
+                        <button type="submit"
+                                class="btn btn-danger">
+
+                            <i class="bi bi-trash me-2"></i>
+                            Delete Product
+
+                        </button>
+
+                        <a asp-action="Index"
+                           class="btn btn-outline-secondary">
+
+                            <i class="bi bi-arrow-left me-2"></i>
+                            Cancel
+
+                        </a>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

@@ -1,0 +1,40 @@
+<script>
+    (function () {
+
+        // smooth page transition between Login <-> Register
+        document.querySelectorAll('[data-transition]').forEach(function (a) {
+            a.addEventListener('click', function (e) {
+                e.preventDefault();
+                var href = a.getAttribute('href');
+                document.body.classList.add('leaving');
+                setTimeout(function () { window.location.href = href; }, 380);
+            });
+        });
+
+        // mouse parallax + 3D tilt
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        if (window.matchMedia('(hover: none)').matches) return;
+
+        var floats = [].slice.call(document.querySelectorAll('.float'));
+        var wrap = document.querySelector('.tilt-wrap');
+
+        window.addEventListener('mousemove', function (e) {
+            var x = e.clientX / window.innerWidth - 0.5;
+            var y = e.clientY / window.innerHeight - 0.5;
+
+            floats.forEach(function (f) {
+                var d = parseFloat(f.getAttribute('data-depth')) || 20;
+                f.style.transform = 'translate3d(' + (-x * d) + 'px,' + (-y * d) + 'px,0)';
+            });
+
+            if (wrap) {
+                wrap.style.transform = 'rotateY(' + (x * 7) + 'deg) rotateX(' + (-y * 7) + 'deg)';
+            }
+        });
+
+        window.addEventListener('mouseleave', function () {
+            if (wrap) wrap.style.transform = '';
+        });
+
+    })();
+</script>

@@ -1,0 +1,107 @@
+﻿@model Category
+
+@{
+    ViewData["Title"] = "Delete Category";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+<div class="page-wrapper">
+    <div class="content-container">
+
+        <div class="table-card">
+
+            <div class="table-card-header bg-danger text-white">
+                <h4 class="mb-0">
+                    Delete Category
+                </h4>
+            </div>
+
+            <div class="p-4">
+
+                <div class="alert alert-danger">
+
+                    Are you sure you want to delete:
+
+                    <strong>
+                        @Model.Name
+                    </strong>
+
+                    ?
+
+                </div>
+
+                <div class="row">
+
+                    <div class="col-md-6">
+
+                        <p>
+                            <strong>Category ID :</strong>
+                            #@Model.CategoryId
+                        </p>
+
+                    </div>
+
+                    <div class="col-md-6">
+
+                        <p>
+                            <strong>Products Count :</strong>
+                            @(Model.Products?.Count ?? 0)
+                        </p>
+
+                    </div>
+
+                    <div class="col-12">
+
+                        <p>
+                            <strong>Description :</strong>
+                            @Model.Description
+                        </p>
+
+                    </div>
+
+                </div>
+
+                @if (Model.Products != null && Model.Products.Any())
+                {
+                    <div class="alert alert-warning">
+
+                        <i class="bi bi-exclamation-circle me-2"></i>
+
+                        This category contains
+                        <strong>@Model.Products.Count</strong>
+                        product(s). You may need to remove them first.
+
+                    </div>
+                }
+
+                <hr />
+
+                <form asp-action="DeleteConfirmed"
+                      method="post">
+
+                    <input type="hidden"
+                           name="id"
+                           value="@Model.CategoryId" />
+
+                    <button class="btn btn-danger">
+
+                        <i class="bi bi-trash"></i>
+                        Delete
+
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn btn-secondary">
+
+                        Cancel
+
+                    </a>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,165 @@
+﻿@model Product
+
+@{
+    ViewData["Title"] = "Product Details";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+}
+
+<div class="page-wrapper">
+
+    <div class="content-container">
+
+        <div class="d-flex align-items-center mb-4">
+
+            <div class="title-icon">
+                <i class="bi bi-eye-fill"></i>
+            </div>
+
+            <div>
+                <h1 class="page-title">Product Details</h1>
+                <p class="page-subtitle mb-0">
+                    View complete product information
+                </p>
+            </div>
+
+        </div>
+
+        <div class="form-card">
+
+            <div class="form-card-header">
+
+                <h5 class="fw-bold mb-0">
+                    Product Information
+                </h5>
+
+            </div>
+
+            <div class="p-4">
+
+                <div class="row align-items-center">
+
+                    <div class="col-lg-4 mb-4">
+
+                        <div class="image-box">
+
+                            <img src="@Model.ImagePath"
+                                 class="product-image"
+                                 alt="@Model.Title" />
+
+                        </div>
+
+                    </div>
+
+                    <div class="col-lg-8">
+
+                        <h2 class="product-title">
+                            @Model.Title
+                        </h2>
+
+                        <div class="details-grid">
+
+                            <div class="detail-item">
+
+                                <span class="detail-label">
+                                    Product ID
+                                </span>
+
+                                <span class="detail-value">
+                                    #@Model.ProductId
+                                </span>
+
+                            </div>
+
+                            <div class="detail-item">
+
+                                <span class="detail-label">
+                                    Category
+                                </span>
+
+                                <span class="detail-value">
+                                    @Model.Category?.Name
+                                </span>
+
+                            </div>
+
+                            <div class="detail-item">
+
+                                <span class="detail-label">
+                                    Price
+                                </span>
+
+                                <span class="detail-value price">
+                                    @Model.Price EGP
+                                </span>
+
+                            </div>
+
+                            <div class="detail-item">
+
+                                <span class="detail-label">
+                                    Quantity
+                                </span>
+
+                                <span class="detail-value">
+                                    @Model.Quantity
+                                </span>
+
+                            </div>
+
+                        </div>
+
+                        <div class="description-box mt-4">
+
+                            <h6 class="fw-bold mb-3">
+                                Description
+                            </h6>
+
+                            <p class="mb-0">
+                                @Model.Description
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <hr class="my-4" />
+
+                <div class="d-flex gap-2">
+
+                    <a asp-action="Edit"
+                       asp-route-id="@Model.ProductId"
+                       class="btn btn-primary">
+
+                        <i class="bi bi-pencil-square me-2"></i>
+                        Edit Product
+
+                    </a>
+
+                    <a asp-action="Delete"
+                       asp-route-id="@Model.ProductId"
+                       class="btn btn-danger">
+
+                        <i class="bi bi-trash me-2"></i>
+                        Delete
+
+                    </a>
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+
+                        <i class="bi bi-arrow-left me-2"></i>
+                        Back
+
+                    </a>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>

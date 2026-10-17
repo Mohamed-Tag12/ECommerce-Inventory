@@ -1,0 +1,162 @@
+@model Sale
+
+@{
+    ViewData["Title"] = "New Sale";
+    Layout = "~/Views/Shared/AdminLayout.cshtml";
+    var products = (List<Product>)ViewBag.Products;
+}
+
+<div class="container-fluid">
+
+    <div class="page-head">
+        <div>
+            <h2>
+                <i class="bi bi-cart-plus text-primary me-2"></i>
+                New Sale
+            </h2>
+            <p class="text-muted mb-0">Choose a product and quantity. Stock is reduced automatically.</p>
+        </div>
+        <a asp-action="Index" class="btn btn-outline-secondary rounded-3">
+            <i class="bi bi-arrow-left me-2"></i>Back
+        </a>
+    </div>
+
+    <div class="row g-4">
+
+        <div class="col-lg-7">
+            <div class="app-card p-4">
+
+                <form asp-action="Add" method="post">
+
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+                    <div class="mb-3">
+                        <label asp-for="ProductId" class="form-label fw-semibold">Product</label>
+                        <select asp-for="ProductId" id="productSelect" class="form-select form-select-lg">
+                            <option value="0" data-price="0" data-stock="0" data-img="">-- Select a product --</option>
+                            @foreach (var p in products)
+                            {
+                                <option value="@p.ProductId"
+                                        data-price="@p.Price.ToString(System.Globalization.CultureInfo.InvariantCulture)"
+                                        data-stock="@p.Quantity"
+                                        data-img="@p.ImagePath"
+                                        selected="@(Model.ProductId == p.ProductId)">
+                                    @p.Title (@p.Quantity in stock)
+                                </option>
+                            }
+                        </select>
+                        <span asp-validation-for="ProductId" class="text-danger"></span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="Quantity" class="form-label fw-semibold">Quantity</label>
+                            <input asp-for="Quantity" id="qtyInput" type="number" min="1" class="form-control form-control-lg" />
+                            <span asp-validation-for="Quantity" class="text-danger"></span>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label asp-for="CustomerName" class="form-label fw-semibold">Customer (optional)</label>
+                            <input asp-for="CustomerName" list="customerList" autocomplete="off" class="form-control form-control-lg" placeholder="Walk-in Customer" />
+                            <datalist id="customerList">
+                                @foreach (var cn in (List<string>)ViewBag.Customers)
+                                {
+                                    <option value="@cn"></option>
+                                }
+                            </datalist>
+                            <span asp-validation-for="CustomerName" class="text-danger"></span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-primary btn-lg w-100 rounded-3 mt-2">
+                        <i class="bi bi-check2-circle me-2"></i>
+                        Confirm Sale
+                    </button>
+
+                </form>
+
+            </div>
+        </div>
+
+        <div class="col-lg-5">
+            <div class="app-card p-4 text-center" id="summaryCard">
+
+                <img id="sumImg" src="" alt="" class="summary-img d-none" />
+                <div id="sumPlaceholder" class="summary-placeholder">
+                    <i class="bi bi-box-seam"></i>
+                </div>
+
+                <h5 class="fw-bold mt-3 mb-1" id="sumTitle">No product selected</h5>
+                <p class="text-muted mb-3" id="sumStock">&nbsp;</p>
+
+                <div class="summary-row"><span>Unit price</span><strong id="sumPrice">0 EGP</strong></div>
+                <div class="summary-row"><span>Quantity</span><strong id="sumQty">0</strong></div>
+                <hr />
+                <div class="summary-row total"><span>Total</span><strong id="sumTotal">0 EGP</strong></div>
+
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+    .summary-img { width: 150px; height: 150px; object-fit: contain; background: #fff; padding: 8px; border-radius: 18px; border: 1px solid var(--border); }
+    .summary-placeholder {
+        width: 150px; height: 150px; border-radius: 18px; margin: 0 auto;
+        background: var(--surface-2); color: var(--muted); font-size: 52px;
+        display: flex; align-items: center; justify-content: center;
+    }
+    .summary-row { display: flex; justify-content: space-between; padding: 8px 0; color: var(--muted); }
+    .summary-row.total { font-size: 22px; color: var(--text); }
+    .summary-row.total strong { color: #16a34a; }
+</style>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+
+    <script>
+        (function () {
+            var select = document.getElementById("productSelect");
+            var qty = document.getElementById("qtyInput");
+
+            function fmt(n) { return Number(n).toLocaleString("en-US", { maximumFractionDigits: 0 }); }
+
+            function update() {
+                var opt = select.options[select.selectedIndex];
+                var price = parseFloat(opt.getAttribute("data-price")) || 0;
+                var stock = parseInt(opt.getAttribute("data-stock")) || 0;
+                var img = opt.getAttribute("data-img");
+                var q = parseInt(qty.value) || 0;
+
+                var hasProduct = select.value !== "0";
+
+                document.getElementById("sumTitle").textContent = hasProduct
+                    ? opt.text.replace(/\s*\(\d+ in stock\)$/, "")
+                    : "No product selected";
+                document.getElementById("sumStock").textContent = hasProduct ? stock + " in stock" : "\u00A0";
+                document.getElementById("sumPrice").textContent = fmt(price) + " EGP";
+                document.getElementById("sumQty").textContent = q;
+                document.getElementById("sumTotal").textContent = fmt(price * q) + " EGP";
+
+                var imgEl = document.getElementById("sumImg");
+                var ph = document.getElementById("sumPlaceholder");
+                if (hasProduct && img) {
+                    imgEl.src = img;
+                    imgEl.classList.remove("d-none");
+                    ph.classList.add("d-none");
+                } else {
+                    imgEl.classList.add("d-none");
+                    ph.classList.remove("d-none");
+                }
+
+                if (hasProduct && stock > 0) { qty.max = stock; } else { qty.removeAttribute("max"); }
+            }
+
+            select.addEventListener("change", update);
+            qty.addEventListener("input", update);
+            update();
+        })();
+    </script>
+}
