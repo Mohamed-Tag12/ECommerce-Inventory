@@ -2,8 +2,6 @@ using Projact__ItI.Models;
 
 namespace Projact__ItI.Context
 {
-    // Fills the new modules with sample data the first time the app runs.
-    // Each part only runs if its table is empty.
     public static class DataSeeder
     {
         private static readonly (string Name, string Email, string Phone, string City)[] CustomerData =
@@ -31,7 +29,7 @@ namespace Projact__ItI.Context
             SeedExpenses();
         }
 
-        // ---------------------------------------------------------------- customers
+       
         private static void SeedCustomers()
         {
             try
@@ -56,7 +54,7 @@ namespace Projact__ItI.Context
             catch { }
         }
 
-        // ---------------------------------------------------------------- suppliers
+  
         private static void SeedSuppliers()
         {
             try
@@ -82,7 +80,7 @@ namespace Projact__ItI.Context
             catch { }
         }
 
-        // ---------------------------------------------------------------- sales (last 30 days)
+       
         private static void SeedSales()
         {
             try
@@ -147,7 +145,7 @@ namespace Projact__ItI.Context
             catch { }
         }
 
-        // ---------------------------------------------------------------- purchases (restocks, last 45 days)
+      
         private static void SeedPurchases()
         {
             try
@@ -159,7 +157,7 @@ namespace Projact__ItI.Context
                 var products = db.Products.OrderBy(p => p.ProductId).ToList();
                 if (suppliers.Count == 0 || products.Count == 0) return;
 
-                // which product categories each supplier delivers (by seed category ids)
+           
                 var map = new Dictionary<string, int[]>
                 {
                     ["Cairo Tech Distribution"] = new[] { 1, 11 },
@@ -208,7 +206,6 @@ namespace Projact__ItI.Context
             catch { }
         }
 
-        // ---------------------------------------------------------------- expenses (last 3 months)
         private static void SeedExpenses()
         {
             try

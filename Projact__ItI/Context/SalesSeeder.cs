@@ -2,7 +2,7 @@ using Projact__ItI.Models;
 
 namespace Projact__ItI.Context
 {
-    // Adds ~30 days of sample sales the first time the app runs (only if there are no sales yet)
+  
     public static class SalesSeeder
     {
         public static void Seed()
@@ -42,7 +42,6 @@ namespace Projact__ItI.Context
                 {
                     int orders = rnd.Next(2, 6);
 
-                    // a little busier on weekends
                     var day = today.AddDays(-daysAgo);
                     if (day.DayOfWeek == DayOfWeek.Friday || day.DayOfWeek == DayOfWeek.Saturday)
                     {
@@ -51,7 +50,7 @@ namespace Projact__ItI.Context
 
                     for (int i = 0; i < orders; i++)
                     {
-                        // skewed pick: first products sell more often
+                      
                         int index = (int)(Math.Pow(rnd.NextDouble(), 1.7) * products.Count);
                         var product = products[Math.Min(index, products.Count - 1)];
 
@@ -85,7 +84,7 @@ namespace Projact__ItI.Context
             }
             catch
             {
-                // database not created / migrated yet - ignore, it will seed on the next run
+              
             }
         }
     }
